@@ -1,4 +1,2 @@
-{
-	user_port: 8080,
-	admin_pass: // make this a string
-}
+this.user_port = 8080;
+this.admin_pass = throw new Error("You gotta set an admin_pass. Replace throw... with your string.");
