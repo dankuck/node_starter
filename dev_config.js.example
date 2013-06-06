@@ -1,0 +1,4 @@
+{
+	user_port: 8080,
+	admin_pass: // make this a string
+}
