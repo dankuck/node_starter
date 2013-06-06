@@ -1,0 +1,98 @@
+<html>
+	<head>
+		<title>Fun with JavaScript</title>
+		<style>
+			.response{
+				border: 1px solid black;
+				margin: 1em;
+				padding: 1em;
+			}
+		</style>
+		<script src="socket.io/socket.io.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.4/jquery.min.js"></script>
+	</head>
+	<body>
+		<div style="width: 1000px; margin-left: auto; margin-right: auto;">
+			Connection: <img id="connection_led" src="http://jmri.org/resources/icons/throttles/RedPowerLED.gif" />
+			<textarea id="code" style="width: 100%; height: 20em;"></textarea>
+			<button onclick="run_code();return false;">EVAL</button>
+			<button onclick="run_code_server();return false;">EVAL on Server</button>
+			password <input type="password" id="server_eval_password" />
+			<div id="responses">
+			</div>
+		</div>
+		<script type="text/javascript">
+		
+			var connected_gif = "http://jmri.org/resources/icons/throttles/GreenPowerLED.gif";
+			var disconnected_gif = "http://jmri.org/resources/icons/throttles/RedPowerLED.gif";
+			
+			var socket;
+		
+			function run_code(){
+				var code = document.getElementById('code').value;
+				try{
+					var rerun = document.createElement('button');
+					rerun.onclick = function(){
+						document.getElementById('code').value = code;
+					};
+					rerun.innerHTML = '&uarr;';
+					log(code, rerun);
+					var response;
+					eval('response = (function(){' + code + '})()');
+					if (response)
+						log(response);
+				}
+				catch(e){
+					log(e);
+				}
+			}
+		
+			function run_code_server(){
+				var code = document.getElementById('code').value;
+				try{
+					var rerun = document.createElement('button');
+					rerun.onclick = function(){
+						document.getElementById('code').value = code;
+					};
+					rerun.innerHTML = '&uarr;';
+					log(code, rerun);
+					document.cookie = 'server_eval_password=' + document.getElementById('server_eval_password').value;
+					socket.emit('register_developer', document.getElementById('server_eval_password').value);
+					socket.emit('eval', code);
+				}
+				catch(e){
+					log(e);
+				}
+			}
+			
+			function log(thing, controls){
+				var div = document.createElement('div');
+				div.className = 'response';
+				div.appendChild(document.createElement('pre')).appendChild(document.createTextNode(thing + ""));
+				if (controls)
+					div.insertBefore(controls, div.firstChild);
+				var responses = document.getElementById('responses');
+				responses.insertBefore(div, responses.firstChild);
+			}
+			
+			function setup_socket(){
+		        socket = io.connect('//' + location.hostname);
+				socket.on('log', log);
+				socket.on('connect', function(){
+					document.getElementById('connection_led').src = connected_gif;
+				});
+				socket.on('disconnect', function(){
+					document.getElementById('connection_led').src = disconnected_gif;
+				});	
+			}
+			
+			setup_socket();
+
+			var matches = document.cookie.match(/\bserver_eval_password\=(.*?);/);
+			if (matches){
+				document.getElementById('server_eval_password').value = matches[1];
+				socket.emit('register_developer', document.getElementById('server_eval_password').value);				
+			}
+		</script>
+	</body>
+</html>
