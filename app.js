@@ -46,6 +46,11 @@ io.sockets.on('connection', function (socket) {
       	console.log(['eval', code]);
       	if (! socket.is_developer)
       		return socket.disconnect();
-      	eval(code);
+      	try{
+      		eval(code);
+      	}
+      	catch (e){
+      		client_log(e);
+      	}
       });
 });
