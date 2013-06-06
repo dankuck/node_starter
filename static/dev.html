@@ -88,7 +88,7 @@
 			
 			setup_socket();
 
-			var matches = document.cookie.match(/\bserver_eval_password\=(.*?);?/);
+			var matches = document.cookie.match(/\bserver_eval_password\=(.*);?/);
 			if (matches){
 				document.getElementById('server_eval_password').value = matches[1];
 				socket.emit('register_developer', document.getElementById('server_eval_password').value);				
