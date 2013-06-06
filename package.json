@@ -1,0 +1,13 @@
+{
+  "name": "node_starter",
+  "description": "The basis of an app",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "socket.io"        : "0.9.x",
+    //"socket.io-client" : "0.9.x",
+    "underscore"       : "1.4.4",
+    //"aws-sdk"          : "0.9.x",
+    //"weak"             : "0.2.x"
+  }
+}
